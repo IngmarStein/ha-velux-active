@@ -44,6 +44,11 @@
       "arrive_home": {
         "name": "Arrive Home"
       }
+    },
+    "switch": {
+      "silent_mode": {
+        "name": "Silent Mode"
+      }
     }
   }
 }

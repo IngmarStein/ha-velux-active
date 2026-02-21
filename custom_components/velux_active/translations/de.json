@@ -44,6 +44,11 @@
       "arrive_home": {
         "name": "Ankunft zu Hause"
       }
+    },
+    "switch": {
+      "silent_mode": {
+        "name": "Leiser Betrieb"
+      }
     }
   }
 }

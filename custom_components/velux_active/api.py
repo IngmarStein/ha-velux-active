@@ -228,6 +228,43 @@ class VeluxActiveApi:
                 f"Cannot connect to Velux ACTIVE: {err}"
             ) from err
 
+    async def async_set_silent_mode(
+        self, home_id: str, bridge_id: str, module_id: str, silent: bool
+    ) -> None:
+        """Set the silent mode of a module."""
+        await self._ensure_token()
+        payload = {
+            "home": {
+                "id": home_id,
+                "modules": [
+                    {
+                        "bridge": bridge_id,
+                        "id": module_id,
+                        "silent": silent,
+                    }
+                ],
+            }
+        }
+        try:
+            async with self._session.post(
+                SET_STATE_URL,
+                json=payload,
+                headers={
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Authorization": f"Bearer {self._access_token}",
+                },
+            ) as resp:
+                if resp.status == 403:
+                    raise VeluxActiveAuthError("Access denied")
+                if not resp.ok:
+                    raise VeluxActiveConnectionError(
+                        f"Failed to set silent mode: {resp.status}"
+                    )
+        except aiohttp.ClientError as err:
+            raise VeluxActiveConnectionError(
+                f"Cannot connect to Velux ACTIVE: {err}"
+            ) from err
+
     async def async_stop_movements(self, home_id: str, bridge_id: str) -> None:
         """Stop all movements on the given bridge."""
         await self._ensure_token()
