@@ -34,6 +34,9 @@ async def async_setup_entry(
 
     # Also add a single home-level virtual departure button regardless of physical switches
     entities.append(VeluxActiveHomeDepartureButton(coordinator))
+    
+    # Add a virtual button for returning home
+    entities.append(VeluxActiveHomeArriveButton(coordinator))
 
     async_add_entities(entities)
 
@@ -87,3 +90,26 @@ class VeluxActiveHomeDepartureButton(CoordinatorEntity[VeluxActiveCoordinator], 
     async def async_press(self) -> None:
         """Trigger the departure action."""
         await self.coordinator.api.async_set_persons_away(self.coordinator.home_id)
+
+
+class VeluxActiveHomeArriveButton(CoordinatorEntity[VeluxActiveCoordinator], ButtonEntity):
+    """A virtual button for the home's arrive/return action."""
+
+    _attr_has_entity_name = True
+    _attr_translation_key = "arrive_home"
+    _attr_icon = "mdi:home-import-outline"
+
+    def __init__(self, coordinator: VeluxActiveCoordinator) -> None:
+        """Initialize the button."""
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{coordinator.home_id}_home_arrive"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, coordinator.home_id)},
+            name="Velux ACTIVE System",
+            manufacturer="Velux",
+            model="KIX 300",
+        )
+
+    async def async_press(self) -> None:
+        """Trigger the arrive home action."""
+        await self.coordinator.api.async_set_persons_home(self.coordinator.home_id)

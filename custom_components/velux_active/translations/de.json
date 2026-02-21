@@ -40,6 +40,9 @@
     "button": {
       "departure": {
         "name": "Abwesenheit"
+      },
+      "arrive_home": {
+        "name": "Ankunft zu Hause"
       }
     }
   }

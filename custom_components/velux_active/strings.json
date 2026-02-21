@@ -40,6 +40,9 @@
     "button": {
       "departure": {
         "name": "Departure"
+      },
+      "arrive_home": {
+        "name": "Arrive Home"
       }
     }
   }

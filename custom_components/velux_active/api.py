@@ -12,6 +12,7 @@ from .const import (
     HOMES_DATA_URL,
     SET_STATE_URL,
     SET_PERSONS_AWAY_URL,
+    SET_PERSONS_HOME_URL,
 )
 
 
@@ -275,6 +276,26 @@ class VeluxActiveApi:
                 if not resp.ok:
                     raise VeluxActiveConnectionError(
                         f"Failed to set persons away: {resp.status}"
+                    )
+        except aiohttp.ClientError as err:
+            raise VeluxActiveConnectionError(
+                f"Cannot connect to Velux ACTIVE: {err}"
+            ) from err
+
+    async def async_set_persons_home(self, home_id: str) -> None:
+        """Trigger the 'Arrive Home' mode to unlock the home."""
+        await self._ensure_token()
+        try:
+            async with self._session.post(
+                SET_PERSONS_HOME_URL,
+                data={"access_token": self._access_token, "home_id": home_id},
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            ) as resp:
+                if resp.status == 403:
+                    raise VeluxActiveAuthError("Access denied")
+                if not resp.ok:
+                    raise VeluxActiveConnectionError(
+                        f"Failed to set persons home: {resp.status}"
                     )
         except aiohttp.ClientError as err:
             raise VeluxActiveConnectionError(
