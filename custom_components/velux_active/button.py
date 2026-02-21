@@ -25,58 +25,15 @@ async def async_setup_entry(
     """Set up Velux ACTIVE button entities from a config entry."""
     coordinator: VeluxActiveCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    modules: list[dict[str, Any]] = coordinator.data.get("modules", [])
-    entities: list[VeluxActiveDepartureButton] = []
-    
-    for module in modules:
-        if module.get("type") == MODULE_TYPE_DEPARTURE_SWITCH:
-            entities.append(VeluxActiveDepartureButton(coordinator, module))
+    entities: list[ButtonEntity] = []
 
-    # Also add a single home-level virtual departure button regardless of physical switches
+    # Add a single home-level virtual departure button
     entities.append(VeluxActiveHomeDepartureButton(coordinator))
     
     # Add a virtual button for returning home
     entities.append(VeluxActiveHomeArriveButton(coordinator))
 
     async_add_entities(entities)
-
-
-class VeluxActiveDepartureButton(CoordinatorEntity[VeluxActiveCoordinator], ButtonEntity):
-    """A button for a physical Velux ACTIVE departure switch."""
-
-    _attr_has_entity_name = True
-    _attr_translation_key = "departure"
-    _attr_icon = "mdi:home-export-outline"
-
-    def __init__(
-        self,
-        coordinator: VeluxActiveCoordinator,
-        module: dict[str, Any],
-    ) -> None:
-        """Initialize the button."""
-        super().__init__(coordinator)
-        self._module_id: str = module["id"]
-        self._attr_unique_id = f"{self._module_id}_departure"
-        
-        device_name = module.get("name")
-        if not device_name or device_name == self._module_id:
-            room_id = module.get("room_id")
-            room_name = coordinator.room_names.get(room_id) if room_id else None
-            if room_name:
-                device_name = f"{room_name} Switch"
-            else:
-                device_name = f"Switch {self._module_id}"
-
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, self._module_id)},
-            name=device_name,
-            manufacturer="Velux",
-            model="NXD",
-        )
-
-    async def async_press(self) -> None:
-        """Trigger the departure action."""
-        await self.coordinator.api.async_set_persons_away(self.coordinator.home_id)
 
 
 class VeluxActiveHomeDepartureButton(CoordinatorEntity[VeluxActiveCoordinator], ButtonEntity):
