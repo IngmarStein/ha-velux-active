@@ -1,0 +1,10 @@
+{
+  "domain": "velux_active",
+  "name": "Velux ACTIVE",
+  "codeowners": ["@IngmarStein"],
+  "config_flow": true,
+  "documentation": "https://github.com/IngmarStein/ha-velux-active",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "version": "0.1.0"
+}

@@ -1,0 +1,39 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Velux ACTIVE",
+        "description": "Enter your Velux ACTIVE account credentials.",
+        "data": {
+          "username": "Email address",
+          "password": "Password"
+        }
+      },
+      "select_home": {
+        "title": "Select Home",
+        "description": "Multiple homes were found. Please select the one you want to add.",
+        "data": {
+          "home_id": "Home"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid credentials. Please check your email address and password.",
+      "cannot_connect": "Failed to connect to the Velux ACTIVE cloud. Please try again.",
+      "unknown": "An unexpected error occurred. Please try again."
+    },
+    "abort": {
+      "already_configured": "This Velux home is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Velux ACTIVE Options",
+        "data": {
+          "update_interval": "Update interval (seconds)"
+        }
+      }
+    }
+  }
+}
