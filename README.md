@@ -17,7 +17,7 @@ Velux ACTIVE devices can be paired with Apple HomeKit out of the box. That works
 | Feature | HomeKit (built-in HA) | This integration |
 |---|---|---|
 | **Requires Apple ecosystem** | Yes (iPhone/iPad for initial pairing) | No |
-| **Works with Android / web** | Limited | ✅ Full HA UI |
+| **Ecosystem support** | Apple HomeKit | Home Assistant (Google Home / Alexa via HA) |
 | **Room sensors exposed** | ✅ CO₂, humidity, temperature | ✅ CO₂, humidity, temperature, illuminance, air-quality index |
 | **HA automations & scripts** | Basic | ✅ Full access |
 | **Position feedback** | Limited | ✅ Current position from API |
