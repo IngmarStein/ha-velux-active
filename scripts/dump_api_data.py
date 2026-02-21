@@ -77,6 +77,15 @@ async def main():
                 with open("homestatus_dump.json", "w") as f:
                     json.dump(homestatus, f, indent=2)
                 print("Saved homestatus to homestatus_dump.json")
+                
+                print()
+                print("Home Status Modules:")
+                for module in homestatus.get("body", {}).get("home", {}).get("modules", []):
+                    m_id = module.get("id")
+                    m_type = module.get("type", "<NO TYPE>")
+                    silent = module.get("silent", "N/A")
+                    print(f"  - ID: {m_id} | Type: {m_type} | Silent: {silent}")
+                
             else:
                 print("No homes found to fetch status for.")
         except Exception as e:
