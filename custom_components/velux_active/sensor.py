@@ -144,6 +144,7 @@ class VeluxActiveRoomSensor(
         self._room_id: str = room["id"]
         self.entity_description = description
         self._attr_unique_id = f"{self._room_id}_{description.key}"
+        self._attr_name = description.name
         
         # Room sensors should be named after the room itself
         device_name = room.get("name", self._room_id)
@@ -191,6 +192,7 @@ class VeluxActiveModuleSensor(
         self._module_id: str = module["id"]
         self.entity_description = description
         self._attr_unique_id = f"{self._module_id}_{description.key}"
+        self._attr_name = description.name
         
         device_id = self._module_id
         device_name = module.get("name", self._module_id)
