@@ -94,6 +94,15 @@ MODULE_SENSOR_DESCRIPTIONS: tuple[VeluxModuleSensorEntityDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=PERCENTAGE,
     ),
+    VeluxModuleSensorEntityDescription(
+        key="wifi_strength",
+        module_key="wifi_strength",
+        translation_key="wifi_strength",
+        device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement="dBm",
+        entity_registry_enabled_default=False,
+    ),
 )
 
 
@@ -145,7 +154,6 @@ class VeluxActiveRoomSensor(
         self._attr_unique_id = f"{self._room_id}_{description.key}"
         self._attr_name = description.name
         
-        # Room sensors should be named after the room itself
         device_name = room.get("name", self._room_id)
         
         self._attr_device_info = DeviceInfo(

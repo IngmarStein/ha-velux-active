@@ -37,6 +37,16 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "is_raining": {
+        "name": "Raining"
+      }
+    },
+    "sensor": {
+      "wifi_strength": {
+        "name": "Wi-Fi Strength"
+      }
+    },
     "button": {
       "departure": {
         "name": "Departure"

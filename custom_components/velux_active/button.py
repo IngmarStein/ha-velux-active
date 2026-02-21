@@ -57,6 +57,7 @@ class VeluxActiveHomeDepartureButton(CoordinatorEntity[VeluxActiveCoordinator], 
         
         # Identify the device. Use bridge ID if available, otherwise fallback to home ID.
         device_id = bridge_module["id"] if bridge_module else coordinator.home_id
+        device_name = bridge_module.get("name", "Velux ACTIVE System") if bridge_module else "Velux ACTIVE System"
         
         # Retrieve gateway metadata
         fw_ver = None
@@ -72,9 +73,9 @@ class VeluxActiveHomeDepartureButton(CoordinatorEntity[VeluxActiveCoordinator], 
         
         self._attr_device_info = DeviceInfo(
             identifiers=identifiers,
-            name="Velux ACTIVE System",
+            name=device_name,
             manufacturer="Velux",
-            model=MODEL_MAP.get("KIX 300", "KIX 300 Gateway"),
+            model=MODEL_MAP.get(bridge_module.get("type", "NXG") if bridge_module else "KIX 300", "Gateway"),
             sw_version=fw_ver if fw_ver else None,
             hw_version=hw_ver if hw_ver else None,
             connections=connections,
@@ -99,6 +100,7 @@ class VeluxActiveHomeArriveButton(CoordinatorEntity[VeluxActiveCoordinator], But
         
         # Identify the device. Use bridge ID if available, otherwise fallback to home ID.
         device_id = bridge_module["id"] if bridge_module else coordinator.home_id
+        device_name = bridge_module.get("name", "Velux ACTIVE System") if bridge_module else "Velux ACTIVE System"
 
         # Retrieve gateway metadata
         fw_ver = None
@@ -114,9 +116,9 @@ class VeluxActiveHomeArriveButton(CoordinatorEntity[VeluxActiveCoordinator], But
         
         self._attr_device_info = DeviceInfo(
             identifiers=identifiers,
-            name="Velux ACTIVE System",
+            name=device_name,
             manufacturer="Velux",
-            model=MODEL_MAP.get("KIX 300", "KIX 300 Gateway"),
+            model=MODEL_MAP.get(bridge_module.get("type", "NXG") if bridge_module else "KIX 300", "Gateway"),
             sw_version=fw_ver if fw_ver else None,
             hw_version=hw_ver if hw_ver else None,
             connections=connections,
