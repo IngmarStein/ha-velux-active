@@ -23,7 +23,7 @@ from .coordinator import VeluxActiveCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[Platform] = [Platform.COVER, Platform.SENSOR, Platform.BUTTON, Platform.SWITCH, Platform.BINARY_SENSOR]
+PLATFORMS: list[Platform] = [Platform.COVER, Platform.SENSOR, Platform.SWITCH, Platform.BINARY_SENSOR]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
