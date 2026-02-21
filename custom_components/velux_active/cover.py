@@ -17,7 +17,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, MODULE_TYPE_BRIDGE, MODULE_TYPE_ROLLER_SHUTTER
+from .const import DOMAIN, MODULE_TYPE_BRIDGE, MODULE_TYPE_ROLLER_SHUTTER, MODEL_MAP
 from .coordinator import VeluxActiveCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -94,10 +94,11 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
             identifiers={(DOMAIN, self._module_id)},
             name=device_name,
             manufacturer=module.get("manufacturer", "Velux"),
-            model=module.get("velux_type", MODULE_TYPE_ROLLER_SHUTTER),
+            model=MODEL_MAP.get(module.get("velux_type", MODULE_TYPE_ROLLER_SHUTTER), module.get("velux_type", MODULE_TYPE_ROLLER_SHUTTER)),
             via_device=(DOMAIN, self._bridge_id) if self._bridge_id else None,
             sw_version=fw_ver if fw_ver else None,
             hw_version=hw_ver if hw_ver else None,
+            connections=set(),
         )
         # Initialise cached position from the first coordinator payload
         self._attr_current_cover_position: int | None = module.get("current_position")

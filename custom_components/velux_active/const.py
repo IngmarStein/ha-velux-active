@@ -21,4 +21,15 @@ MODULE_TYPE_ROLLER_SHUTTER = "NXO"
 MODULE_TYPE_DEPARTURE_SWITCH = "NXD"
 MODULE_TYPE_SENSOR = "NXS"
 
+MODEL_MAP = {
+    "shutter": "Roller Shutter",
+    "window": "Window",
+    "awning_blind": "Awning Blind",
+    "venetian_blind": "Venetian Blind",
+    "NXS": "Indoor Climate Sensor",
+    "NXD": "Departure Switch",
+    "NXG": "Gateway",
+    "KIX 300": "KIX 300 Gateway",
+}
+
 UPDATE_INTERVAL = 60  # seconds

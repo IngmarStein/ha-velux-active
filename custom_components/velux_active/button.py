@@ -12,7 +12,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, MODULE_TYPE_DEPARTURE_SWITCH
+from .const import DOMAIN, MODULE_TYPE_BRIDGE, MODULE_TYPE_DEPARTURE_SWITCH, MODEL_MAP
 from .coordinator import VeluxActiveCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -62,17 +62,19 @@ class VeluxActiveHomeDepartureButton(CoordinatorEntity[VeluxActiveCoordinator], 
         fw_ver = None
         hw_ver = None
         connections = None
+        identifiers = {(DOMAIN, coordinator.home_id)}
         if bridge_module:
             fw_ver = str(bridge_module.get("firmware_revision_netatmo", ""))
             hw_ver = str(bridge_module.get("hardware_version", ""))
             if ":" in device_id:
                 connections = {(dr.CONNECTION_NETWORK_MAC, device_id)}
+                identifiers.add((DOMAIN, device_id))
         
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, device_id)},
+            identifiers=identifiers,
             name="Velux ACTIVE System",
             manufacturer="Velux",
-            model="KIX 300",
+            model=MODEL_MAP.get("KIX 300", "KIX 300 Gateway"),
             sw_version=fw_ver if fw_ver else None,
             hw_version=hw_ver if hw_ver else None,
             connections=connections,
@@ -102,17 +104,19 @@ class VeluxActiveHomeArriveButton(CoordinatorEntity[VeluxActiveCoordinator], But
         fw_ver = None
         hw_ver = None
         connections = None
+        identifiers = {(DOMAIN, coordinator.home_id)}
         if bridge_module:
             fw_ver = str(bridge_module.get("firmware_revision_netatmo", ""))
             hw_ver = str(bridge_module.get("hardware_version", ""))
             if ":" in device_id:
                 connections = {(dr.CONNECTION_NETWORK_MAC, device_id)}
+                identifiers.add((DOMAIN, device_id))
         
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, device_id)},
+            identifiers=identifiers,
             name="Velux ACTIVE System",
             manufacturer="Velux",
-            model="KIX 300",
+            model=MODEL_MAP.get("KIX 300", "KIX 300 Gateway"),
             sw_version=fw_ver if fw_ver else None,
             hw_version=hw_ver if hw_ver else None,
             connections=connections,

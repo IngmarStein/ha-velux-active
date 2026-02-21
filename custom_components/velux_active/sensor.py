@@ -23,7 +23,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import DOMAIN, MODEL_MAP
 from .coordinator import VeluxActiveCoordinator
 
 
@@ -154,7 +154,8 @@ class VeluxActiveRoomSensor(
             identifiers={(DOMAIN, self._room_id)},
             name=device_name,
             manufacturer="Velux",
-            model="NXS",
+            model=MODEL_MAP.get("NXS", "NXS"),
+            connections=set(),
         )
 
     @property
@@ -212,9 +213,10 @@ class VeluxActiveModuleSensor(
             identifiers={(DOMAIN, device_id)},
             name=device_name,
             manufacturer="Velux",
-            model=module.get("type", "Unknown"),
+            model=MODEL_MAP.get(module.get("type", "Unknown"), module.get("type", "Unknown")),
             sw_version=fw_ver if fw_ver else None,
             hw_version=hw_ver if hw_ver else None,
+            connections=set(),
         )
 
     @property
