@@ -71,10 +71,9 @@ ROOM_SENSOR_DESCRIPTIONS: tuple[VeluxRoomSensorEntityDescription, ...] = (
         key="air_quality",
         room_key="air_quality",
         name="Air Quality Index",
-        device_class=None,
+        device_class=SensorDeviceClass.AQI,
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=None,
-        icon="mdi:air-filter",
     ),
 )
 
