@@ -54,7 +54,7 @@ For each room that reports sensor data, the following sensors are created (only 
 | Humidity | % | `humidity` |
 | Temperature | °C | `temperature` |
 | Illuminance | lx | `illuminance` |
-| Air Quality Index | – | – |
+| Air Quality Index | – | `aqi` |
 
 ---
 
