@@ -166,7 +166,10 @@ class VeluxActiveRoomSensor(
     @property
     def native_value(self) -> Any:
         """Return the sensor value."""
-        return self._room.get(self.entity_description.room_key)
+        val = self._room.get(self.entity_description.room_key)
+        if val is not None and self.entity_description.room_key == "temperature":
+            return val / 10.0
+        return val
 
 
 class VeluxActiveModuleSensor(
