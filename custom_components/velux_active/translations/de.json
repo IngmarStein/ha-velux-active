@@ -1,0 +1,39 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Velux ACTIVE",
+        "description": "Geben Sie Ihre Velux ACTIVE-Zugangsdaten ein.",
+        "data": {
+          "username": "E-Mail-Adresse",
+          "password": "Passwort"
+        }
+      },
+      "select_home": {
+        "title": "Zuhause auswählen",
+        "description": "Es wurden mehrere Häuser gefunden. Bitte wählen Sie das gewünschte aus.",
+        "data": {
+          "home_id": "Zuhause"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Ungültige Zugangsdaten. Bitte überprüfen Sie Ihre E-Mail-Adresse und Ihr Passwort.",
+      "cannot_connect": "Verbindung zur Velux ACTIVE-Cloud fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    },
+    "abort": {
+      "already_configured": "Dieses Velux-Zuhause ist bereits konfiguriert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Velux ACTIVE-Optionen",
+        "data": {
+          "update_interval": "Aktualisierungsintervall (Sekunden)"
+        }
+      }
+    }
+  }
+}
