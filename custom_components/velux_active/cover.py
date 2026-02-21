@@ -81,6 +81,8 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
             model=module.get("velux_type", MODULE_TYPE_ROLLER_SHUTTER),
             via_device=(DOMAIN, self._bridge_id) if self._bridge_id else None,
         )
+        # Initialise cached position from the first coordinator payload
+        self._attr_current_cover_position: int | None = module.get("current_position")
 
     @property
     def _module(self) -> dict[str, Any]:
@@ -90,16 +92,17 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
                 return mod
         return {}
 
-    @property
-    def current_cover_position(self) -> int | None:
-        """Return the current position of the cover (0=closed, 100=open)."""
-        pos = self._module.get("current_position")
-        return pos if pos is not None else None
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Update cached state from the coordinator and write to HA."""
+        mod = self._module
+        self._attr_current_cover_position = mod.get("current_position")
+        super()._handle_coordinator_update()
 
     @property
     def is_closed(self) -> bool | None:
         """Return True if the cover is fully closed."""
-        pos = self.current_cover_position
+        pos = self._attr_current_cover_position
         if pos is None:
             return None
         return pos == 0
@@ -136,6 +139,9 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
         await self.coordinator.api.async_set_cover_position(
             self.coordinator.home_id, self._bridge_id, self._module_id, 100
         )
+        # Optimistic update – give instant UI feedback before the next poll
+        self._attr_current_cover_position = 100
+        self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
 
     async def async_close_cover(self, **kwargs: Any) -> None:
@@ -143,6 +149,9 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
         await self.coordinator.api.async_set_cover_position(
             self.coordinator.home_id, self._bridge_id, self._module_id, 0
         )
+        # Optimistic update – give instant UI feedback before the next poll
+        self._attr_current_cover_position = 0
+        self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
 
     async def async_set_cover_position(self, **kwargs: Any) -> None:
@@ -151,6 +160,9 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
         await self.coordinator.api.async_set_cover_position(
             self.coordinator.home_id, self._bridge_id, self._module_id, position
         )
+        # Optimistic update – give instant UI feedback before the next poll
+        self._attr_current_cover_position = position
+        self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
 
     async def async_stop_cover(self, **kwargs: Any) -> None:
