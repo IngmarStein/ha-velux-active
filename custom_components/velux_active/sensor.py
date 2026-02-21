@@ -197,11 +197,16 @@ class VeluxActiveModuleSensor(
             device_id = module["room_id"]
             device_name = coordinator.room_names.get(device_id, device_name)
             
+        fw_ver = str(module.get("firmware_revision", ""))
+        hw_ver = str(module.get("hardware_version", ""))
+            
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, device_id)},
             name=device_name,
             manufacturer="Velux",
             model=module.get("type", "Unknown"),
+            sw_version=fw_ver if fw_ver else None,
+            hw_version=hw_ver if hw_ver else None,
         )
 
     @property

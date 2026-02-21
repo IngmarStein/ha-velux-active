@@ -86,12 +86,17 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
             else:
                 device_name = f"{type_name} {self._module_id}"
 
+        fw_ver = str(module.get("firmware_revision", ""))
+        hw_ver = str(module.get("hardware_version", ""))
+
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._module_id)},
             name=device_name,
             manufacturer=module.get("manufacturer", "Velux"),
             model=module.get("velux_type", MODULE_TYPE_ROLLER_SHUTTER),
             via_device=(DOMAIN, self._bridge_id) if self._bridge_id else None,
+            sw_version=fw_ver if fw_ver else None,
+            hw_version=hw_ver if hw_ver else None,
         )
         # Initialise cached position from the first coordinator payload
         self._attr_current_cover_position: int | None = module.get("current_position")

@@ -47,11 +47,18 @@ class VeluxActiveHomeDepartureButton(CoordinatorEntity[VeluxActiveCoordinator], 
         """Initialize the button."""
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.home_id}_home_departure"
+        
+        # Retrieve gateway metadata
+        fw_ver = str(coordinator.data.get("firmware_revision_netatmo", ""))
+        hw_ver = str(coordinator.data.get("hardware_version", ""))
+        
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.home_id)},
             name="Velux ACTIVE System",
             manufacturer="Velux",
             model="KIX 300",
+            sw_version=fw_ver if fw_ver else None,
+            hw_version=hw_ver if hw_ver else None,
         )
 
     async def async_press(self) -> None:
@@ -70,11 +77,18 @@ class VeluxActiveHomeArriveButton(CoordinatorEntity[VeluxActiveCoordinator], But
         """Initialize the button."""
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.home_id}_home_arrive"
+        
+        # Retrieve gateway metadata
+        fw_ver = str(coordinator.data.get("firmware_revision_netatmo", ""))
+        hw_ver = str(coordinator.data.get("hardware_version", ""))
+        
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.home_id)},
             name="Velux ACTIVE System",
             manufacturer="Velux",
             model="KIX 300",
+            sw_version=fw_ver if fw_ver else None,
+            hw_version=hw_ver if hw_ver else None,
         )
 
     async def async_press(self) -> None:
