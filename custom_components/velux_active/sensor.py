@@ -207,10 +207,6 @@ class VeluxActiveModuleSensor(
             
         fw_ver = str(module.get("firmware_revision", ""))
         hw_ver = str(module.get("hardware_version", ""))
-        
-        connections = None
-        if ":" in self._module_id:
-            connections = {(dr.CONNECTION_NETWORK_MAC, self._module_id)}
             
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, device_id)},
@@ -219,7 +215,6 @@ class VeluxActiveModuleSensor(
             model=module.get("type", "Unknown"),
             sw_version=fw_ver if fw_ver else None,
             hw_version=hw_ver if hw_ver else None,
-            connections=connections,
         )
 
     @property
