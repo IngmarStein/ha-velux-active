@@ -38,16 +38,21 @@ class VeluxActiveCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.home_id = home_id
         self._module_names: dict[str, str] = {}
         self._room_names: dict[str, str] = {}
+        self._module_rooms: dict[str, str] = {}
         self._names_fetched = False
 
     def _extract_names(self, data: Any) -> None:
-        """Recursively extract all 'id' -> 'name' mappings."""
+        """Recursively extract all 'id' -> 'name' and 'room_id' mappings."""
         if isinstance(data, dict):
             item_id = data.get("id")
-            item_name = data.get("name")
-            if isinstance(item_id, str) and isinstance(item_name, str):
-                self._module_names[item_id] = item_name
-                self._room_names[item_id] = item_name
+            if isinstance(item_id, str):
+                if item_name := data.get("name"):
+                    if isinstance(item_name, str):
+                        self._module_names[item_id] = item_name
+                        self._room_names[item_id] = item_name
+                if room_id := data.get("room_id"):
+                    if isinstance(room_id, str):
+                        self._module_rooms[item_id] = room_id
             for value in data.values():
                 self._extract_names(value)
         elif isinstance(data, list):
@@ -86,10 +91,12 @@ class VeluxActiveCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         home: dict[str, Any] = status.get("body", {}).get("home", {})
 
-        # Inject human-readable names
+        # Inject human-readable names and relationships
         for module in home.get("modules", []):
             if module.get("id") in self._module_names:
                 module["name"] = self._module_names[module["id"]]
+            if module.get("id") in self._module_rooms:
+                module["room_id"] = self._module_rooms[module["id"]]
                 
         for room in home.get("rooms", []):
             if room.get("id") in self._room_names:

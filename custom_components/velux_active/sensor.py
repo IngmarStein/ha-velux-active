@@ -183,9 +183,17 @@ class VeluxActiveModuleSensor(
         self._module_id: str = module["id"]
         self.entity_description = description
         self._attr_unique_id = f"{self._module_id}_{description.key}"
+        
+        device_id = self._module_id
+        device_name = module.get("name", self._module_id)
+        
+        # If this is a room sensor (NXS), attach its battery to the Room device
+        if module.get("type") == "NXS" and "room_id" in module:
+            device_id = module["room_id"]
+            
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, self._module_id)},
-            name=module.get("name", self._module_id),
+            identifiers={(DOMAIN, device_id)},
+            name=device_name,
             manufacturer="Velux",
             model=module.get("type", "Unknown"),
         )

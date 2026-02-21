@@ -21,7 +21,7 @@ def mock_validate_credentials():
     with patch(
         "custom_components.velux_active.config_flow.VeluxActiveConfigFlow._async_validate_credentials",
         new_callable=AsyncMock,
-        return_value=MOCK_HOMES_DATA["body"]["homes"],
+        return_value=(MOCK_HOMES_DATA["body"]["homes"], MagicMock()),
     ) as mock:
         yield mock
 
@@ -128,7 +128,7 @@ class TestConfigFlow:
 
         flow = VeluxActiveConfigFlow()
         flow.hass = MagicMock()
-        flow._async_validate_credentials = AsyncMock(return_value=multi_home_data)
+        flow._async_validate_credentials = AsyncMock(return_value=(multi_home_data, MagicMock()))
         flow.async_show_form = MagicMock(return_value={"type": "form", "step_id": "select_home"})
 
         result = await flow.async_step_user(

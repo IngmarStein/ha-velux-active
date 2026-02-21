@@ -64,6 +64,7 @@ class VeluxActiveConfigFlow(ConfigFlow, domain=DOMAIN):
         self._client_id: str = DEFAULT_CLIENT_ID
         self._client_secret: str = DEFAULT_CLIENT_SECRET
         self._homes: list[dict[str, Any]] = []
+        self._api: VeluxActiveApi | None = None
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -76,7 +77,7 @@ class VeluxActiveConfigFlow(ConfigFlow, domain=DOMAIN):
             self._password = user_input[CONF_PASSWORD]
 
             try:
-                homes = await self._async_validate_credentials(
+                homes, api = await self._async_validate_credentials(
                     self._username,
                     self._password,
                     self._client_id,
@@ -91,6 +92,7 @@ class VeluxActiveConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "unknown"
             else:
                 self._homes = homes
+                self._api = api
                 if len(homes) == 1:
                     return await self._async_create_entry(homes[0])
                 return await self.async_step_select_home()
@@ -123,15 +125,24 @@ class VeluxActiveConfigFlow(ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(home["id"])
         self._abort_if_unique_id_configured()
 
+        entry_data = {
+            CONF_USERNAME: self._username,
+            CONF_PASSWORD: self._password,
+            CONF_CLIENT_ID: self._client_id,
+            CONF_CLIENT_SECRET: self._client_secret,
+            "home_id": home["id"],
+        }
+        
+        if self._api:
+            entry_data["token_data"] = {
+                "access_token": self._api.access_token,
+                "refresh_token": self._api.refresh_token,
+                "token_expires_at": self._api.token_expires_at,
+            }
+
         return self.async_create_entry(
             title=home.get("name", home["id"]),
-            data={
-                CONF_USERNAME: self._username,
-                CONF_PASSWORD: self._password,
-                CONF_CLIENT_ID: self._client_id,
-                CONF_CLIENT_SECRET: self._client_secret,
-                "home_id": home["id"],
-            },
+            data=entry_data,
         )
 
     async def _async_validate_credentials(
@@ -140,8 +151,8 @@ class VeluxActiveConfigFlow(ConfigFlow, domain=DOMAIN):
         password: str,
         client_id: str,
         client_secret: str,
-    ) -> list[dict[str, Any]]:
-        """Validate credentials and return list of homes."""
+    ) -> tuple[list[dict[str, Any]], VeluxActiveApi]:
+        """Validate credentials and return list of homes and api client."""
         session = async_get_clientsession(self.hass)
         api = VeluxActiveApi(session, username, password, client_id, client_secret)
         await api.async_authenticate()
@@ -149,7 +160,7 @@ class VeluxActiveConfigFlow(ConfigFlow, domain=DOMAIN):
         homes: list[dict[str, Any]] = homes_data.get("body", {}).get("homes", [])
         if not homes:
             raise VeluxActiveConnectionError("No homes found")
-        return homes
+        return homes, api
 
     @staticmethod
     @callback
