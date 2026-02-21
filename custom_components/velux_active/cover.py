@@ -74,9 +74,21 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
         self._attr_device_class = VELUX_TYPE_TO_DEVICE_CLASS.get(
             velux_type, CoverDeviceClass.SHUTTER
         )
+        
+        device_name = module.get("name")
+        if not device_name or device_name == self._module_id:
+            # Fallback: Room Name + Device Type
+            room_id = module.get("room_id")
+            room_name = coordinator.room_names.get(room_id) if room_id else None
+            type_name = velux_type.replace("_", " ").capitalize()
+            if room_name:
+                device_name = f"{room_name} {type_name}"
+            else:
+                device_name = f"{type_name} {self._module_id}"
+
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._module_id)},
-            name=module.get("name", self._module_id),
+            name=device_name,
             manufacturer=module.get("manufacturer", "Velux"),
             model=module.get("velux_type", MODULE_TYPE_ROLLER_SHUTTER),
             via_device=(DOMAIN, self._bridge_id) if self._bridge_id else None,

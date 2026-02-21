@@ -143,9 +143,13 @@ class VeluxActiveRoomSensor(
         self._room_id: str = room["id"]
         self.entity_description = description
         self._attr_unique_id = f"{self._room_id}_{description.key}"
+        
+        # Room sensors should be named after the room itself
+        device_name = room.get("name", self._room_id)
+        
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._room_id)},
-            name=room.get("name", self._room_id),
+            name=device_name,
             manufacturer="Velux",
             model="NXS",
         )
@@ -188,8 +192,10 @@ class VeluxActiveModuleSensor(
         device_name = module.get("name", self._module_id)
         
         # If this is a room sensor (NXS), attach its battery to the Room device
+        # and ensure the name matches the room name.
         if module.get("type") == "NXS" and "room_id" in module:
             device_id = module["room_id"]
+            device_name = coordinator.room_names.get(device_id, device_name)
             
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, device_id)},

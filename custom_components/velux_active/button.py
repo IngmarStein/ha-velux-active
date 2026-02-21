@@ -57,9 +57,19 @@ class VeluxActiveDepartureButton(CoordinatorEntity[VeluxActiveCoordinator], Butt
         super().__init__(coordinator)
         self._module_id: str = module["id"]
         self._attr_unique_id = f"{self._module_id}_departure"
+        
+        device_name = module.get("name")
+        if not device_name or device_name == self._module_id:
+            room_id = module.get("room_id")
+            room_name = coordinator.room_names.get(room_id) if room_id else None
+            if room_name:
+                device_name = f"{room_name} Switch"
+            else:
+                device_name = f"Switch {self._module_id}"
+
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._module_id)},
-            name=module.get("name", self._module_id),
+            name=device_name,
             manufacturer="Velux",
             model="NXD",
         )

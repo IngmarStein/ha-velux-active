@@ -36,9 +36,9 @@ class VeluxActiveCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         )
         self.api = api
         self.home_id = home_id
-        self._module_names: dict[str, str] = {}
-        self._room_names: dict[str, str] = {}
-        self._module_rooms: dict[str, str] = {}
+        self.module_names: dict[str, str] = {}
+        self.room_names: dict[str, str] = {}
+        self.module_rooms: dict[str, str] = {}
         self._names_fetched = False
 
     def _extract_names(self, data: Any) -> None:
@@ -48,11 +48,11 @@ class VeluxActiveCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             if isinstance(item_id, str):
                 if item_name := data.get("name"):
                     if isinstance(item_name, str):
-                        self._module_names[item_id] = item_name
-                        self._room_names[item_id] = item_name
+                        self.module_names[item_id] = item_name
+                        self.room_names[item_id] = item_name
                 if room_id := data.get("room_id"):
                     if isinstance(room_id, str):
-                        self._module_rooms[item_id] = room_id
+                        self.module_rooms[item_id] = room_id
             for value in data.values():
                 self._extract_names(value)
         elif isinstance(data, list):
@@ -93,13 +93,13 @@ class VeluxActiveCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         # Inject human-readable names and relationships
         for module in home.get("modules", []):
-            if module.get("id") in self._module_names:
-                module["name"] = self._module_names[module["id"]]
-            if module.get("id") in self._module_rooms:
-                module["room_id"] = self._module_rooms[module["id"]]
+            if module.get("id") in self.module_names:
+                module["name"] = self.module_names[module["id"]]
+            if module.get("id") in self.module_rooms:
+                module["room_id"] = self.module_rooms[module["id"]]
                 
         for room in home.get("rooms", []):
-            if room.get("id") in self._room_names:
-                room["name"] = self._room_names[room["id"]]
+            if room.get("id") in self.room_names:
+                room["name"] = self.room_names[room["id"]]
 
         return home
