@@ -130,7 +130,7 @@ class VeluxActiveRoomSensor(
     """A sensor for a Velux ACTIVE room measurement."""
 
     _attr_has_entity_name = True
-    entity_description: VeluxRoomSensorEntityDescription
+    _attr_name = None
 
     def __init__(
         self,
@@ -170,7 +170,7 @@ class VeluxActiveModuleSensor(
     """A sensor for a Velux ACTIVE module (e.g. battery)."""
 
     _attr_has_entity_name = True
-    entity_description: VeluxModuleSensorEntityDescription
+    _attr_name = None
 
     def __init__(
         self,
