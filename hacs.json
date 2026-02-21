@@ -1,0 +1,5 @@
+{
+  "name": "Velux ACTIVE",
+  "description": "Home Assistant integration for the Velux ACTIVE system using the reverse-engineered API.",
+  "render_readme": true
+}
