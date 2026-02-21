@@ -40,6 +40,20 @@ class VeluxActiveCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._room_names: dict[str, str] = {}
         self._names_fetched = False
 
+    def _extract_names(self, data: Any) -> None:
+        """Recursively extract all 'id' -> 'name' mappings."""
+        if isinstance(data, dict):
+            item_id = data.get("id")
+            item_name = data.get("name")
+            if isinstance(item_id, str) and isinstance(item_name, str):
+                self._module_names[item_id] = item_name
+                self._room_names[item_id] = item_name
+            for value in data.values():
+                self._extract_names(value)
+        elif isinstance(data, list):
+            for item in data:
+                self._extract_names(item)
+
     async def _async_fetch_names(self) -> None:
         """Fetch human-readable names from homesdata."""
         if self._names_fetched:
@@ -54,12 +68,7 @@ class VeluxActiveCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         homes = data.get("body", {}).get("homes", [])
         for home in homes:
             if home.get("id") == self.home_id:
-                for module in home.get("modules", []):
-                    if "id" in module and "name" in module:
-                        self._module_names[module["id"]] = module["name"]
-                for room in home.get("rooms", []):
-                    if "id" in room and "name" in room:
-                        self._room_names[room["id"]] = room["name"]
+                self._extract_names(home)
         
         self._names_fetched = True
 
