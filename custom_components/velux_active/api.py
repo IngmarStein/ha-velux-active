@@ -11,6 +11,7 @@ from .const import (
     HOME_STATUS_URL,
     HOMES_DATA_URL,
     SET_STATE_URL,
+    SET_PERSONS_AWAY_URL,
 )
 
 
@@ -254,6 +255,26 @@ class VeluxActiveApi:
                 if not resp.ok:
                     raise VeluxActiveConnectionError(
                         f"Failed to stop movements: {resp.status}"
+                    )
+        except aiohttp.ClientError as err:
+            raise VeluxActiveConnectionError(
+                f"Cannot connect to Velux ACTIVE: {err}"
+            ) from err
+
+    async def async_set_persons_away(self, home_id: str) -> None:
+        """Trigger the 'Departure' / 'Away' mode to close all windows."""
+        await self._ensure_token()
+        try:
+            async with self._session.post(
+                SET_PERSONS_AWAY_URL,
+                data={"access_token": self._access_token, "home_id": home_id},
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            ) as resp:
+                if resp.status == 403:
+                    raise VeluxActiveAuthError("Access denied")
+                if not resp.ok:
+                    raise VeluxActiveConnectionError(
+                        f"Failed to set persons away: {resp.status}"
                     )
         except aiohttp.ClientError as err:
             raise VeluxActiveConnectionError(

@@ -78,6 +78,25 @@ ROOM_SENSOR_DESCRIPTIONS: tuple[VeluxRoomSensorEntityDescription, ...] = (
 )
 
 
+@dataclass(frozen=True)
+class VeluxModuleSensorEntityDescription(SensorEntityDescription):
+    """Description of a Velux module sensor."""
+
+    module_key: str = ""
+
+
+MODULE_SENSOR_DESCRIPTIONS: tuple[VeluxModuleSensorEntityDescription, ...] = (
+    VeluxModuleSensorEntityDescription(
+        key="battery",
+        module_key="battery_percent",
+        name="Battery",
+        device_class=SensorDeviceClass.BATTERY,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=PERCENTAGE,
+    ),
+)
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
@@ -86,12 +105,21 @@ async def async_setup_entry(
     """Set up Velux ACTIVE sensor entities from a config entry."""
     coordinator: VeluxActiveCoordinator = hass.data[DOMAIN][entry.entry_id]
 
+    entities: list[SensorEntity] = []
+    
+    # Room sensors
     rooms: list[dict[str, Any]] = coordinator.data.get("rooms", [])
-    entities: list[VeluxActiveRoomSensor] = []
     for room in rooms:
         for description in ROOM_SENSOR_DESCRIPTIONS:
             if room.get(description.room_key) is not None:
                 entities.append(VeluxActiveRoomSensor(coordinator, room, description))
+
+    # Module sensors (like battery)
+    modules: list[dict[str, Any]] = coordinator.data.get("modules", [])
+    for module in modules:
+        for description in MODULE_SENSOR_DESCRIPTIONS:
+            if module.get(description.module_key) is not None:
+                entities.append(VeluxActiveModuleSensor(coordinator, module, description))
 
     async_add_entities(entities)
 
@@ -134,3 +162,43 @@ class VeluxActiveRoomSensor(
     def native_value(self) -> Any:
         """Return the sensor value."""
         return self._room.get(self.entity_description.room_key)
+
+
+class VeluxActiveModuleSensor(
+    CoordinatorEntity[VeluxActiveCoordinator], SensorEntity
+):
+    """A sensor for a Velux ACTIVE module (e.g. battery)."""
+
+    _attr_has_entity_name = True
+    entity_description: VeluxModuleSensorEntityDescription
+
+    def __init__(
+        self,
+        coordinator: VeluxActiveCoordinator,
+        module: dict[str, Any],
+        description: VeluxModuleSensorEntityDescription,
+    ) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+        self._module_id: str = module["id"]
+        self.entity_description = description
+        self._attr_unique_id = f"{self._module_id}_{description.key}"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._module_id)},
+            name=module.get("name", self._module_id),
+            manufacturer="Velux",
+            model=module.get("type", "Unknown"),
+        )
+
+    @property
+    def _module(self) -> dict[str, Any]:
+        """Return the current module status data."""
+        for module in self.coordinator.data.get("modules", []):
+            if module.get("id") == self._module_id:
+                return module
+        return {}
+
+    @property
+    def native_value(self) -> Any:
+        """Return the sensor value."""
+        return self._module.get(self.entity_description.module_key)

@@ -195,6 +195,20 @@ class TestApiMethods:
         assert session.post.called
 
     @pytest.mark.asyncio
+    async def test_set_persons_away(self) -> None:
+        """Test setting persons away."""
+        session = MagicMock()
+        session.post = MagicMock(
+            return_value=_make_mock_response(200, {"status": "ok"})
+        )
+        api = _make_api(session)
+        api.restore_tokens("token", "refresh", time.time() + 3600)
+
+        await api.async_set_persons_away(MOCK_HOME_ID)
+
+        assert session.post.called
+
+    @pytest.mark.asyncio
     async def test_get_homes_data_auth_error(self) -> None:
         """Test that 403 raises VeluxActiveAuthError."""
         session = MagicMock()

@@ -13,6 +13,7 @@ AUTH_URL = "https://app.velux-active.com/oauth2/token"
 HOMES_DATA_URL = "https://app.velux-active.com/api/homesdata"
 HOME_STATUS_URL = "https://app.velux-active.com/syncapi/v1/homestatus"
 SET_STATE_URL = "https://app.velux-active.com/syncapi/v1/setstate"
+SET_PERSONS_AWAY_URL = "https://app.velux-active.com/api/setpersonsaway"
 
 MODULE_TYPE_BRIDGE = "NXG"
 MODULE_TYPE_ROLLER_SHUTTER = "NXO"

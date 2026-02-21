@@ -22,7 +22,7 @@ Velux ACTIVE devices can be paired with Apple HomeKit out of the box. That works
 | **HA automations & scripts** | Basic | ✅ Full access |
 | **Position feedback** | Limited | ✅ Current position from API |
 | **Stop command** | ❌ No | ✅ Yes |
-| **Connection type** | Local (Bluetooth/Thread) | Cloud polling (60 s default) |
+| **Connection type** | Local (WiFi) | Cloud polling (60 s default) |
 | **Works without internet** | ✅ Yes | ❌ No |
 
 **In summary:** use HomeKit if you want local, low-latency control from Apple devices. Use this integration if you want full Home Assistant capabilities (automations, scripts, dashboards), the complete sensor set (illuminance, air-quality index), or don't use Apple hardware.
