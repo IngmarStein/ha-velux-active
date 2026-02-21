@@ -1,5 +1,9 @@
 # Velux ACTIVE – Home Assistant Integration
 
+<p align="center">
+  <img src="logo.png" alt="Velux ACTIVE" width="200">
+</p>
+
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
 A native Home Assistant integration for the **Velux ACTIVE** KIX 300 system. It communicates directly with the Velux cloud API (the same reverse-engineered protocol used by the official mobile app) without requiring the Apple HomeKit ecosystem.
@@ -58,6 +62,8 @@ For each room that reports sensor data, the following sensors are created (only 
 
 ### Via HACS (recommended)
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=IngmarStein&repository=ha-velux-active&category=integration)
+
 1. Open HACS → **Integrations** → ⋮ menu → **Custom repositories**.
 2. Add `https://github.com/IngmarStein/ha-velux-active` with category **Integration**.
 3. Search for **Velux ACTIVE** and install it.
@@ -102,6 +108,8 @@ The design is informed by studying the [Netatmo integration](https://github.com/
 ---
 
 ## Troubleshooting
+
+**"Someone has logged into your VELUX ACTIVE account" emails** – This is normal. Whenever Home Assistant is restarted and the integration creates a new session with the Velux API, Velux may send an automated security alert to your email address. Currently, there is no known way to disable these alerts from the Velux side.
 
 **"Invalid credentials"** – Check your email/password in the Velux ACTIVE app. The app and this integration share the same account.
 
