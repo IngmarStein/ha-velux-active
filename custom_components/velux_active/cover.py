@@ -12,6 +12,7 @@ from homeassistant.components.cover import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -89,6 +90,10 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
         fw_ver = str(module.get("firmware_revision", ""))
         hw_ver = str(module.get("hardware_version", ""))
 
+        connections = None
+        if ":" in self._module_id:
+            connections = {(dr.CONNECTION_NETWORK_MAC, self._module_id)}
+
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._module_id)},
             name=device_name,
@@ -97,6 +102,7 @@ class VeluxActiveCover(CoordinatorEntity[VeluxActiveCoordinator], CoverEntity):
             via_device=(DOMAIN, self._bridge_id) if self._bridge_id else None,
             sw_version=fw_ver if fw_ver else None,
             hw_version=hw_ver if hw_ver else None,
+            connections=connections,
         )
         # Initialise cached position from the first coordinator payload
         self._attr_current_cover_position: int | None = module.get("current_position")
